@@ -1,0 +1,84 @@
+set webview disable
+set telnet disable all
+set ssh enable
+save config
+
+set system login ADMIN super-user enable 
+set password ADMIN
+
+set system login USERNAME read-write enable 
+set password USERNAME
+
+set system login USERNAME read-only enable 
+set password USERNAME
+
+
+clear system login USERNAME
+clear system login ro
+clear system login rw
+clear system login admin
+
+set ip address IP_ADDRESS mask IP_MASK gateway GATEWAY
+
+set system lockout attempts 2 time 30
+
+set ciscocdp state disable
+
+set lldp port status disable PORT
+
+set port mirroring create SOURCE_PORT DESTINATION_TARGET_PORT
+
+clear snmp community NAME
+
+set spantree spanguard enable
+set spantree adminedge PORT 
+set spantree spanguardtimeout TIME
+
+set spantree portadmin PORT disable
+
+(COMMENT: SET VLAN - Like Cisco access port)
+set vlan create VLAN_ID
+set vlan name VLAN_ID NAME
+set port vlan PORT VLAN_ID modify-egress
+set port ingress filter PORT enable
+set port discard PORT tagged
+set vlan forbidden OTHER_VLAN_ID PORT
+set vlan egress VLAN_ID PORT untagged
+
+set host vlan NETWORKING_VLAN_ID
+
+set vlan dynamicegress VLAN_ID disable
+
+set gvrp disable
+
+(COMMENT: Disable port)
+set port disable PORT
+
+(COMMENT: DHCP Snooping)
+set dhcpsnooping enable
+set dhcpsnooping vlan LAN_VLAN_ID enable
+set dhcpsnooping trust port PORT enable
+set dhcpsnooping log-invalid port PORT enable
+
+(COMMENT: For DHCP Snooping with remote server (server on another network))
+set dhcpsnooping verify mac-address disable
+
+show dhcpsnooping statistics
+
+(COMMENT: ARP Inspection, requires DHCP snooping)
+
+set arpinspection vlan LAN_VLAN_ID logging
+(COMMENT: for ports that are trusted (servers, router))
+set arpinspection trust port PORT enable
+
+(COMMENT: for static arp mappings, can be used to map if DHCP snooping cannot work)
+set arpinspection filter NAME permit ip host HOST_IP mac host SENDER_MAC
+...
+set arpinspection filter NAME vlan VLAN_ID 
+
+(COMMENT: MAC locking is port-security equivalent)
+set maclock enable
+set maclock firstarrival PORT NUMBER_OF_MACs_NEEDED
+
+(COMMENT: Moves firstarrival(stick) to static)
+set maclock move
